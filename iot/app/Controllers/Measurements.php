@@ -1,9 +1,9 @@
 <?php namespace App\Controllers;
 
 use App\Models\Measurement;
+use App\Commands\FilterMeasurements;
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\Validation\Exceptions\ValidationException;
-use DateTime;
 use Exception;
 
 /**
@@ -47,7 +47,7 @@ class Measurements extends ResourceController
 	 * Responds to GET /measurements to return all 
      * Measurement Events data.
      * 
-     * @return HTTPResponse
+     * @return CodeIgniter\HTTP\Response
 	 */
     private function getAllMeasurements()
     {
@@ -80,89 +80,20 @@ class Measurements extends ResourceController
         parse_str($url['query'], $params);
         return $params;
     }
-
-    /**
-	 * Validates variable is an integer.
-     * 
-     * @param string
-     * 
-     * @return integer
-     * 
-     * throws ValidationException   
-	 */
-    private function validateIsInteger($i)
-    {
-        if(ctype_digit($i))
-        {
-            return intval($i);
-        }
-        else
-        {
-            throw new ValidationException('Invalid Integer');
-        }
-    }
-
-     /**
-	 * Performs validation on query parameters.
-     * 
-     * @param array
-     * 
-     * @return array
-	 */
-    private function validateFilterParameters($params)
-    {
-        // Verify query parameters are valid
-        $queryParams = array('site_name','name','from_datetime','to_datetime');
-        $providedParams = array_keys($params);
-        if (!array_intersect($queryParams,$providedParams))
-        {
-            throw new ValidationException('Invalid Parameter');
-        }
-        // If null, set strings to SQL wildcard.
-        if (is_null($params['site_name']))
-        {
-            $params['site_name'] = '%';
-        }
-        if (is_null($params['name']))
-        {
-            $params['name'] = '%';
-        }
-        // If no from_datetime supplied, set to 0.
-        if (is_null($params['from_datetime']))
-        {
-            $params['from_datetime'] = 0;
-        }
-        // else validate supplied value is a number.
-        else
-        {
-            $params['from_datetime']=$this->validateIsInteger($params['from_datetime']);
-        }
-        // If no to_datetime supplied set to now.
-        if (is_null($params['to_datetime']))
-        {
-            $now= new DateTime();            
-            $params['to_datetime']=$now->getTimestamp();
-        }
-        // else validate supplied value is number
-        else
-        {
-            $params['to_datetime']=$this->validateIsInteger($params['to_datetime']);
-        }
-        return $params;
-    }
-
+  
     /**
 	 * Responds to GET /measurements/? to filtered 
      * Measurement Events data.
      * 
-     * @return HTTPResponse
+     * @return CodeIgniter\HTTP\Response
 	 */
     private function getFilteredMeasurements()
     {
         // Get URL parameters.
         try 
         {
-            $params = $this->validateFilterParameters($this->getQueryParameters());
+            $params = $this->getQueryParameters();
+            $filterMeasurements = new FilterMeasurements($params);
         }
         catch (ValidationException $e)
         {
@@ -171,10 +102,10 @@ class Measurements extends ResourceController
         try 
         {            
             $result = $this->model->filterMeasurements(
-                $params['site_name'],
-                $params['name'],
-                $params['from_datetime'],
-                $params['to_datetime']
+                $filterMeasurements->siteName,
+                $filterMeasurements->name,
+                $filterMeasurements->fromDatetime,
+                $filterMeasurements->toDatetime
             );
             if (!empty($result))
             {
@@ -196,7 +127,7 @@ class Measurements extends ResourceController
 	 * Responds to GET /measurements to return all 
      * Measurement Events data.
      * 
-     * @return HTTPResponse
+     * @return CodeIgniter\HTTP\Response
 	 */
     public function index()
     {
@@ -216,7 +147,7 @@ class Measurements extends ResourceController
 	 * Responds to GET /measurements/{id} to return a single 
      * Measurement Event by Id.
      * 
-     * @return HTTPResponse
+     * @return CodeIgniter\HTTP\Response
 	 */
     public function show($id = null)
     {
@@ -235,7 +166,7 @@ class Measurements extends ResourceController
 	 * Responds to POST /measurements to create a single 
      * Measurement Event.
      * 
-     * @return HTTPResponse
+     * @return CodeIgniter\HTTP\Response
 	 */
     public function create()
     {
