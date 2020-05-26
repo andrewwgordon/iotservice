@@ -3,6 +3,7 @@
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Filters\FilterInterface;
+use CodeIgniter\HTTP\Request;
 use Config\Services;
 use Exception;
 
@@ -29,10 +30,10 @@ class APIAuth implements FilterInterface
 
     public function before(RequestInterface $request)
     {
-        $authenticated = true;
+        $authenticated = false;
         try 
         {
-            # $apiValue=$request->getHeader('X-Api-Key')->getValue();
+            $apiValue = $_SERVER['HTTP_X_API_KEY'];
         }
         catch (Exception $e)
         {
