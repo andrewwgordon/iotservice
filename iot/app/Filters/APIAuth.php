@@ -3,10 +3,16 @@
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Filters\FilterInterface;
-use CodeIgniter\HTTP\Request;
 use Config\Services;
 use Exception;
 
+/**
+ * Class APIAuth
+ *
+ * API Authorisation
+ *
+ * @package App\Filters
+ */
 class APIAuth implements FilterInterface
 {
     protected $response;

@@ -3,6 +3,13 @@
 use CodeIgniter\Validation\Exceptions\ValidationException;
 use DateTime;
 
+/**
+ * Class FilterMeasuremwents
+ *
+ * API Command Class to validate API parameters
+ *
+ * @package App\Config
+ */
 class FilterMeasurements
 {
     /**
