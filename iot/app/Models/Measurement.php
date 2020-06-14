@@ -44,15 +44,15 @@ class Measurement extends Model
      * 
      * @return array
 	 */
-    public function getMeasurements($id=false)
+    public function findAllOrById($id = false)
     {
-        if ($id==false) {
+        if ($id == false) {
             return $this->findAll();
         } 
         else 
         {
             return $this->asArray()
-                        ->where(['id'=>$id])
+                        ->where(['id' => $id])
                         ->first();
         }
     }
@@ -67,7 +67,7 @@ class Measurement extends Model
      * 
      * @return array
      * */
-    public function filterMeasurements($siteName,$name,$fromPOSIXTime,$toPOSIXTime)
+    public function findFiltered($siteName,$name,$fromPOSIXTime,$toPOSIXTime)
     {
         $sql = 'SELECT *
                 FROM   measurement_event
@@ -95,7 +95,7 @@ class Measurement extends Model
      * @param array $measurement
      * 
 	 */
-    public function addMeasurement($measurement)
+    public function add($measurement)
     {
         $this->insert($measurement);
     }

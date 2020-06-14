@@ -49,11 +49,11 @@ class Measurements extends ResourceController
      * 
      * @return CodeIgniter\HTTP\Response
 	 */
-    private function getAllMeasurements()
+    private function getAll()
     {
         try
         {
-            $result = $this->model->getMeasurements();
+            $result = $this->model->findAllOrById();
             if (!empty($result))
             {
                 return $this->respond($result);
@@ -87,7 +87,7 @@ class Measurements extends ResourceController
      * 
      * @return CodeIgniter\HTTP\Response
 	 */
-    private function getFilteredMeasurements()
+    private function getFiltered()
     {
         // Get URL parameters.
         try 
@@ -101,7 +101,7 @@ class Measurements extends ResourceController
         }
         try 
         {            
-            $result = $this->model->filterMeasurements(
+            $result = $this->model->findFiltered(
                 $filterMeasurements->siteName,
                 $filterMeasurements->name,
                 $filterMeasurements->fromDatetime,
@@ -134,12 +134,12 @@ class Measurements extends ResourceController
         // If no query parameters supplied, get all measurements.
         if (empty($this->request->uri->getQuery()))
         {
-            return $this->getAllMeasurements();
+            return $this->getAll();
         }       
         // else run filtered query.
         else
         {
-            return $this->getFilteredMeasurements();
+            return $this->getFiltered();
         }
     }
 
@@ -153,7 +153,7 @@ class Measurements extends ResourceController
     {
         try
         {
-            return $this->respond($this->model->getMeasurements($id));
+            return $this->respond($this->model->findAllOrById($id));
         }
         catch (Exception $e)
         {
@@ -172,7 +172,7 @@ class Measurements extends ResourceController
     {
         try 
         {
-            $this->model->insert($this->request->getJSON());
+            $this->model->add($this->request->getJSON());
             return $this->respondCreated();
         } 
         catch (Exception $e) 
