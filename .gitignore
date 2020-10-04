@@ -2,3 +2,4 @@
 vendor/
 build/
 iot/app/.passwd_real_ignore
+iot/writable/

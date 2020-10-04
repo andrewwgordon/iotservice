@@ -13,7 +13,7 @@ use Exception;
  * Supports:
  *      GET /measurements
  *      GET /measurements/{id}
- *      GET /measurements?site_name={}&name={}&from_datetime={}&to_datetime={}
+ *      GET /measurements?site_name={}&measurement_location_id={}&from_datetime={}&to_datetime={}
  *      POST /measurements
  *
  * @package App\Controllers
@@ -103,7 +103,7 @@ class Measurements extends ResourceController
         {            
             $result = $this->model->findFiltered(
                 $filterMeasurements->siteName,
-                $filterMeasurements->name,
+                $filterMeasurements->measurementLocationId,
                 $filterMeasurements->fromDatetime,
                 $filterMeasurements->toDatetime
             );

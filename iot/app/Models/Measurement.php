@@ -35,7 +35,7 @@ class Measurement extends Model
 	 *
 	 * @var array
 	 */
-    protected $allowedFields = ['site_name','date_time','name','data_value','description'];
+    protected $allowedFields = ['site_name','date_time','data_value','measurement_location_id'];
 
     /**
 	 * Return all Measurements or single Measurement
@@ -61,25 +61,25 @@ class Measurement extends Model
 	 * Return Measurements filtered by:
      *  
      * @param string  $siteName
-     * @param string  $name
+     * @param string  $measurementLocationId
      * @param integer $fromPOSIXTime
      * @param integer $toPOSIXTime
      * 
      * @return array
      * */
-    public function findFiltered($siteName,$name,$fromPOSIXTime,$toPOSIXTime)
+    public function findFiltered($siteName,$measurementLocationId,$fromPOSIXTime,$toPOSIXTime)
     {
         $sql = 'SELECT *
                 FROM   measurement_event
                 WHERE  date_time >= :fromDateTime:
                 AND    date_time <= :toDateTime:
                 AND    lower(site_name) like lower(:siteName:)
-                AND    lower(name) like lower(:name:)';
+                AND    measurement_location_id = :measurementLocationId:';
         $query = $this->db->query($sql,[
-            'fromDateTime' => $fromPOSIXTime,
-            'toDateTime'   => $toPOSIXTime,
-            'siteName'     => $siteName,
-            'name'         => $name
+            'fromDateTime'          => $fromPOSIXTime,
+            'toDateTime'            => $toPOSIXTime,
+            'siteName'              => $siteName,
+            'measurementLocationId' => $measurementLocationId
         ]);
         if (!$query)
         {

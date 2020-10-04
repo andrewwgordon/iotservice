@@ -20,11 +20,11 @@ class FilterMeasurements
     public $siteName;
 
     /**
-	 * Name of measurement parameter, e.g Temp.
+	 * Id of measurement location
 	 *
-	 * @var string
+	 * @var integer
 	 */
-    public $name;
+    public $measurementLocationId;
 
     /**
 	 * DateTime from query in POSIX time.
@@ -51,7 +51,7 @@ class FilterMeasurements
     public function __construct($params)
     {
          // Verify query parameters are valid
-         $queryParams = array('site_name','name','from_datetime','to_datetime');
+         $queryParams = array('site_name','measurement_location_id','from_datetime','to_datetime');
          $providedParams = array_keys($params);
          if (!array_intersect($queryParams,$providedParams))
          {
@@ -66,13 +66,13 @@ class FilterMeasurements
          {
              $this->siteName=$params['site_name'];
          }
-         if (is_null($params['name']))
+         if (is_null($params['measurement_location_id']))
          {
-             $this->name = '%';
+            throw new ValidationException('Measurement Location Id required');
          }
          else
          {
-             $this->name = $params['name'];
+             $this->measurementLocationId = $this->validateIsInteger($params['measurement_location_id']);
          }
          // If no from_datetime supplied, set to 0.
          if (is_null($params['from_datetime']))
